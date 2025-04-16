@@ -35,20 +35,23 @@ import com.jv23.scribbledash.ui.theme.Success
 @Composable
 fun HomeScreenRoot(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    onNavigateToDifficultyLevelScreen:() -> Unit
+
 ) {
     Scaffold(
         bottomBar = {
             ScribbleDashBottomNavBar(
-                modifier = Modifier,
+                modifier = modifier,
                 navController = navController
             )
         }
 
     ) { innerPadding ->
         HomeScreen(
-            modifier = Modifier
-                .padding(innerPadding)
+            modifier = modifier
+                .padding(innerPadding),
+            onGameModeClick = onNavigateToDifficultyLevelScreen
         )
 
     }
@@ -59,6 +62,7 @@ fun HomeScreenRoot(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    onGameModeClick:() -> Unit
 
 ) {
     Box(
@@ -140,7 +144,7 @@ fun HomeScreen(
                 .padding(8.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.background)
-                .clickable(onClick = {})
+                .clickable(onClick = { onGameModeClick() })
                 .align(Alignment.Center),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
@@ -186,8 +190,8 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     ScribbleDashTheme {
         HomeScreen(
-            modifier = Modifier
-
+            modifier = Modifier,
+            onGameModeClick = {}
         )
 
     }

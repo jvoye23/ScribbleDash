@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -37,13 +40,15 @@ import com.jv23.scribbledash.ui.theme.Success
 @Composable
 fun DifficultyLevelScreenRoot(
     modifier: Modifier = Modifier,
-    onNavigateBack: ()-> Unit
+    onNavigateBack: ()-> Unit,
+    onNavigateTo: () -> Unit
 ) {
     Scaffold () { innerPadding ->
         DifficultyLevelScreen(
             modifier = Modifier
                 .padding(innerPadding),
-            onCloseIconClick = onNavigateBack
+            onCloseIconClick = onNavigateBack,
+            onNavigateToDrawScreen = onNavigateTo
         )
 
     }
@@ -54,7 +59,8 @@ fun DifficultyLevelScreenRoot(
 @Composable
 fun DifficultyLevelScreen(
     modifier: Modifier = Modifier,
-    onCloseIconClick: () -> Unit
+    onCloseIconClick: () -> Unit,
+    onNavigateToDrawScreen: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -134,14 +140,14 @@ fun DifficultyLevelScreen(
 
         ) {
             Column(
+                modifier = Modifier
+                    .clickable { onNavigateToDrawScreen() },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
                     modifier = Modifier
                         .size(88.dp)
                         .padding(bottom = 12.dp),
-
-
                     imageVector = BeginnerIcon,
                     contentDescription = null
                 )
@@ -157,6 +163,7 @@ fun DifficultyLevelScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(bottom = 36.dp)
+                    .clickable { onNavigateToDrawScreen() }
             ) {
                 Image(
                     modifier = Modifier
@@ -173,6 +180,8 @@ fun DifficultyLevelScreen(
 
             }
             Column(
+                modifier = Modifier
+                    .clickable { onNavigateToDrawScreen() },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
@@ -204,7 +213,8 @@ private fun DifficultyLevelScreenPreview() {
     ScribbleDashTheme {
         DifficultyLevelScreen(
             modifier = Modifier,
-            onCloseIconClick = {}
+            onCloseIconClick = {},
+            onNavigateToDrawScreen = {}
         )
 
     }

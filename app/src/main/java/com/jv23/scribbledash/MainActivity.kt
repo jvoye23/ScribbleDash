@@ -92,15 +92,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             modifier = modifier
 
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        ScribbleDashButton(
-            modifier = Modifier,
-            surfaceColor = Primary,
-            backgroundColor = SurfaceHigh,
-            buttonText = "Start!",
-            buttonTextColor = OnPrimary,
-            enabled = true
-        ) { }
+
 
     }
 

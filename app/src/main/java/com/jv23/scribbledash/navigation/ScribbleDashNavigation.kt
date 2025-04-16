@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data object HomeRoute
+data object HomeScreenRoute
 
 @Serializable
 data object CanvasDrawingScreenRoute
@@ -33,23 +33,30 @@ fun ScribbleDashNavigation(
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = HomeRoute
+        startDestination = HomeScreenRoute
     ) {
-        composable<HomeRoute> {
+        composable<HomeScreenRoute> {
             HomeScreenRoot(
                 modifier = modifier,
-                navController = navController
+                navController = navController,
+                onNavigateToDifficultyLevelScreen = {
+                    navController.navigate(DifficultyLevelScreenRoute)
+                }
             )
         }
         composable<DifficultyLevelScreenRoute> {
             DifficultyLevelScreenRoot(
-                onNavigateBack = {navController.navigateUp()
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateTo = {
+                    navController.navigate(CanvasDrawingScreenRoute)
                 }
             )
         }
         composable<CanvasDrawingScreenRoute> {
             CanvasDrawingScreenRoot(
-                onNavigateBack = {navController.navigateUp()
+                onNavigateBack = {navController.popBackStack(HomeScreenRoute, false)
                 }
             )
         }
