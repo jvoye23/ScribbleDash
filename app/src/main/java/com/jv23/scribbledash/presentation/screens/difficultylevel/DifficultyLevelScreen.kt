@@ -145,16 +145,23 @@ fun DifficultyLevelScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    modifier = Modifier
-                        .size(88.dp)
-                        .padding(bottom = 12.dp),
+
                     imageVector = BeginnerIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = CircleShape,
+                            ambientColor = Color.Black
+                            )
+                        .size(88.dp)
                 )
                 Text(
                     text = "Beginner",
                     style = MaterialTheme.typography.labelMedium,
                     color = OnBackgroundVariant,
+                    modifier = Modifier
+                        .padding(top = 12.dp)
 
                 )
 
@@ -167,15 +174,22 @@ fun DifficultyLevelScreen(
             ) {
                 Image(
                     modifier = Modifier
-                        .size(88.dp)
-                        .padding(bottom = 12.dp),
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = CircleShape,
+                            ambientColor = Color.Black
+                        )
+                        .size(88.dp),
                     imageVector = ChallengingIcon,
                     contentDescription = null
                 )
                 Text(
                     text = "Challenging",
                     style = MaterialTheme.typography.labelMedium,
-                    color = OnBackgroundVariant
+                    color = OnBackgroundVariant,
+                    modifier = Modifier
+                        .padding(top = 12.dp),
+
                 )
 
             }
@@ -186,9 +200,12 @@ fun DifficultyLevelScreen(
             ) {
                 Image(
                     modifier = Modifier
-                        .size(88.dp)
-                        .padding(bottom = 12.dp),
-
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = CircleShape,
+                            ambientColor = Color.Black
+                        )
+                        .size(88.dp),
                     imageVector = MasterIcon,
                     contentDescription = null
                 )
@@ -196,6 +213,8 @@ fun DifficultyLevelScreen(
                     text = "Master",
                     style = MaterialTheme.typography.labelMedium,
                     color = OnBackgroundVariant,
+                    modifier = Modifier
+                        .padding(top = 12.dp)
 
                     )
 

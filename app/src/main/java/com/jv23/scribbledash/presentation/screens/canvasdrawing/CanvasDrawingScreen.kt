@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -221,6 +222,11 @@ fun CanvasDrawingScreen(
             )
             ScribbleDashButton(
                 modifier = Modifier
+                    .shadow(
+                        elevation = 2.dp,
+                        shape = RoundedCornerShape(20.dp),
+                        ambientColor = Color.Black
+                    )
                     .width(201.dp),
                 buttonText = "CLEAR CANVAS",
                 enabled = isClearCanvasButtonEnabled,
