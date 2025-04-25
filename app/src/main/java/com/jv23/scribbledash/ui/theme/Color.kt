@@ -26,6 +26,9 @@ val SurfaceLow = Color(0xFFEEE7E0)
 val SurfaceLowest = Color(0xFFE1D5CA)
 val OnSurface = Color(0xFFA5978A)
 val OnSurfaceVariant = Color(0xFFF6F1EC)
+val HourGlassBackground = Color(0xFF742EFC)
+val BoltBackground = Color(0xFF01D2FC)
+val BrandTertiary = Color(0xFFFA852C)
 
 
 val BackgroundBrush: Brush

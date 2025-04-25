@@ -43,17 +43,11 @@ fun DifficultyLevelScreenRoot(
     onNavigateBack: ()-> Unit,
     onNavigateTo: () -> Unit
 ) {
-    Scaffold () { innerPadding ->
-        DifficultyLevelScreen(
-            modifier = Modifier
-                .padding(innerPadding),
-            onCloseIconClick = onNavigateBack,
-            onNavigateToDrawScreen = onNavigateTo
-        )
-
-    }
-
-
+    DifficultyLevelScreen(
+        modifier = modifier,
+        onCloseIconClick = onNavigateBack,
+        onNavigateToDrawScreen = onNavigateTo
+    )
 }
 
 @Composable
@@ -66,7 +60,6 @@ fun DifficultyLevelScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-
     ) {
         //1st Row
         Row(
@@ -88,11 +81,11 @@ fun DifficultyLevelScreen(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        //Center Row
+        //Center Headline & Subline
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset{ IntOffset(0,-190.dp.roundToPx()) }
+                .align(Alignment.TopCenter)
+                .offset{ IntOffset(0, 190.dp.roundToPx()) }
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -132,7 +125,6 @@ fun DifficultyLevelScreen(
                 .fillMaxWidth()
                 .padding(8.dp)
                 .background(MaterialTheme.colorScheme.background)
-                .clickable(onClick = {})
                 .align(Alignment.Center),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically

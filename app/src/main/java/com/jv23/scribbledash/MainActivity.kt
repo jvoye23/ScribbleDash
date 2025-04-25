@@ -40,7 +40,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jv23.scribbledash.navigation.NestedNavigation
 import com.jv23.scribbledash.navigation.ScribbleDashNavigation
+import com.jv23.scribbledash.navigation.TopLevelNavigation
 import com.jv23.scribbledash.presentation.components.ScribbleDashBottomNavBar
 import com.jv23.scribbledash.presentation.components.ScribbleDashButton
 import com.jv23.scribbledash.presentation.components.ScribbleDashTopAppBar
@@ -60,8 +62,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ScribbleDashTheme {
-                ScribbleDashNavigation()
-                /*Scaffold(
+                // Milstone 1
+                 //ScribbleDashNavigation()
+
+                //Milestone
+                TopLevelNavigation()
+
+
+                /*S/caffold(
                     containerColor = Color.Transparent,
                     bottomBar = { ScribbleDashBottomNavBar(navController = NavController(this))}
 
