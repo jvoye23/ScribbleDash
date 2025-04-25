@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.jv23.scribbledash.presentation.screens.canvasdrawing.CanvasDrawingScreenRoot
 import com.jv23.scribbledash.presentation.screens.difficultylevel.DifficultyLevelScreenRoot
 import com.jv23.scribbledash.presentation.screens.home.HomeScreenRoot
+import com.jv23.scribbledash.presentation.screens.statistics.StatisticsScreenRoot
 import kotlinx.serialization.Serializable
 
 
@@ -24,7 +25,7 @@ data object CanvasDrawingScreenRoute
 data object DifficultyLevelScreenRoute
 
 @Serializable
-data object ChartScreenRoute
+data object StatisticsScreenRoute
 
 @Composable
 fun ScribbleDashNavigation(
@@ -58,6 +59,11 @@ fun ScribbleDashNavigation(
             CanvasDrawingScreenRoot(
                 onNavigateBack = {navController.popBackStack(HomeScreenRoute, false)
                 }
+            )
+        }
+        composable<StatisticsScreenRoute> {
+            StatisticsScreenRoot(
+                navController = navController
             )
         }
     }

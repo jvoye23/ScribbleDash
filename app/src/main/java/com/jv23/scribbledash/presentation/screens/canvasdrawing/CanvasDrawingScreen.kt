@@ -1,5 +1,9 @@
 package com.jv23.scribbledash.presentation.screens.canvasdrawing
 
+import android.os.CountDownTimer
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +58,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.jv23.scribbledash.presentation.components.GridBackground
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import kotlin.math.abs
 
 @Composable
@@ -60,33 +67,23 @@ fun CanvasDrawingScreenRoot(
     modifier: Modifier = Modifier,
     onNavigateBack: ()-> Unit
 ) {
-    Scaffold() { innerPadding ->
-        val viewModel = viewModel<CanvasDrawingViewModel>()
-        val state by viewModel.state.collectAsStateWithLifecycle()
+    val viewModel = viewModel<CanvasDrawingViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-        CanvasDrawingScreen(
-            onCloseIconClick = onNavigateBack,
-            paths = state.paths,
-            currentPath = state.currentPath,
-            onAction = viewModel::onAction,
-            modifier = modifier
-                .padding(innerPadding),
-            isUndoButtonEnabled = state.isUndoButtonEnabled,
-            isRedoButtonEnabled = state.isRedoButtonEnabled,
-            isClearCanvasButtonEnabled = state.isClearCanvasButtonEnabled
-        )
-    }
+    CanvasDrawingScreen(
+        onCloseIconClick = onNavigateBack,
+        onAction = viewModel::onAction,
+        state = state,
+        modifier = modifier,
+        
+    )
 }
 
 @Composable
 fun CanvasDrawingScreen(
     onCloseIconClick:() -> Unit,
-    paths: List<PathData>,
-    currentPath: PathData?,
     onAction: (CanvasDrawingAction) -> Unit,
-    isUndoButtonEnabled: Boolean,
-    isRedoButtonEnabled: Boolean,
-    isClearCanvasButtonEnabled: Boolean,
+    state: CanvasDrawingState,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -127,14 +124,12 @@ fun CanvasDrawingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            Row(
-                modifier = Modifier
-                ,
-
-                ) {
+            Row {
                 Text(
                     modifier = Modifier                    ,
-                    text = "Time to draw!",
+                    text = if(state.isCountDownRunning){
+                        "Ready, set"
+                    } else "Time to draw!",
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
@@ -177,13 +172,13 @@ fun CanvasDrawingScreen(
                     )
                 }
         ) {
-            paths.fastForEach { pathData ->
+            state.paths.fastForEach { pathData ->
                 drawPath(
                     path = pathData.path,
                     color = pathData.color,
                 )
             }
-            currentPath?.let {
+            state.currentPath?.let {
                 drawPath(
                     path = it.path,
                     color = it.color
@@ -191,31 +186,138 @@ fun CanvasDrawingScreen(
             }
 
         }
+        Text(
+            text = if(state.isCountDownRunning){
+                "Example"
+            } else "Your Drawing",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset{ IntOffset(0,200.dp.roundToPx()) }
+        )
+
 
 
 
         // Bottom Row
-        Row (
+        LaunchedEffect(key1 = state.countDownTimer, key2 =  state.isCountDownRunning) {
+            if (state.countDownTimer >= 1  && state.isCountDownRunning) {
+                delay(100L)
+                onAction(CanvasDrawingAction.OnUpdateCountDownTimer)
+            } else {
+                onAction(CanvasDrawingAction.OnFinishCountDownTimer)
+            }
+        }
+
+        AnimatedVisibility(
+            visible = state.isCountDownRunning,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+            ) {
+                Text(
+                    text = "${state.countDownTimer / 1000L} seconds left",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        }
+
+
+
+        AnimatedVisibility(
+            visible = state.areBottomButtonsVisible,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+        ) {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+                ,
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+                ) {
+
+                ScribbleDashIconButton(
+                    modifier = Modifier
+                        .size(64.dp),
+                    icon = ReplyIcon,
+                    enabled = state.isUndoButtonEnabled,
+                    onClick = {
+                        onAction(CanvasDrawingAction.OnUndoClick)
+                    }
+                )
+
+                ScribbleDashIconButton(
+                    modifier = Modifier
+                        .size(64.dp),
+                    icon = ForwardIcon,
+                    enabled = state.isRedoButtonEnabled,
+                    onClick = {
+                        onAction(CanvasDrawingAction.OnRedoClick)
+                    }
+                )
+                ScribbleDashButton(
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 2.dp,
+                            shape = RoundedCornerShape(20.dp),
+                            ambientColor = Color.Black
+                        )
+                        .width(201.dp),
+                    buttonText = "CLEAR CANVAS",
+                    enabled = state.isClearCanvasButtonEnabled,
+                    onClick = {
+                        onAction(CanvasDrawingAction.OnClearCanvasClick)
+                    }
+                )
+
+
+
+            }
+
+
+        }
+
+        /*Row (
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
+                ,
+            horizontalArrangement = Arrangement.SpaceBetween,
+
         ) {
+
             ScribbleDashIconButton(
                 modifier = Modifier
                     .size(64.dp),
                 icon = ReplyIcon,
-                enabled = isUndoButtonEnabled,
+                enabled = state.isUndoButtonEnabled,
                 onClick = {
                     onAction(CanvasDrawingAction.OnUndoClick)
                 }
             )
+
             ScribbleDashIconButton(
                 modifier = Modifier
                     .size(64.dp),
                 icon = ForwardIcon,
-                enabled = isRedoButtonEnabled,
+                enabled = state.isRedoButtonEnabled,
                 onClick = {
                     onAction(CanvasDrawingAction.OnRedoClick)
                 }
@@ -229,12 +331,15 @@ fun CanvasDrawingScreen(
                     )
                     .width(201.dp),
                 buttonText = "CLEAR CANVAS",
-                enabled = isClearCanvasButtonEnabled,
+                enabled = state.isClearCanvasButtonEnabled,
                 onClick = {
                     onAction(CanvasDrawingAction.OnClearCanvasClick)
                 }
             )
-        }
+
+
+
+        }*/
     }
 
 }
@@ -282,13 +387,9 @@ private fun CanvasDrawingScreenPreview() {
     ScribbleDashTheme {
         CanvasDrawingScreen(
             onCloseIconClick = {},
-            paths = emptyList(),
-            currentPath = null,
             onAction = {},
-            isUndoButtonEnabled = true,
-            isRedoButtonEnabled = false,
-            isClearCanvasButtonEnabled = true,
-            modifier = Modifier,
+            state = CanvasDrawingState(),
+
         )
 
     }

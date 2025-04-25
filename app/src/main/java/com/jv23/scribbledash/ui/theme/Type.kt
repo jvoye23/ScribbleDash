@@ -107,8 +107,8 @@ val Typography = Typography(
     labelLarge = TextStyle(
         fontFamily = Outfit,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-        lineHeight = 24.sp,
+        fontSize = 24.sp,
+        lineHeight = 28.sp,
         letterSpacing = 0.0.sp
     ),
     labelMedium = TextStyle(
@@ -125,6 +125,7 @@ val Typography = Typography(
         lineHeight = 18.sp,
         letterSpacing = 0.0.sp
     ),
+
 
     /* Other default text styles to override
     titleLarge = TextStyle(

@@ -45,7 +45,13 @@ val OneRoundWonderIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.one_round_wonder)
 
+val HourGlassIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.hourglass)
 
+val BoltIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.bolt)
 
 
 

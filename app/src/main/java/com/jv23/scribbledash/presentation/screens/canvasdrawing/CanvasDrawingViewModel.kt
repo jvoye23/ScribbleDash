@@ -1,8 +1,11 @@
 package com.jv23.scribbledash.presentation.screens.canvasdrawing
 
+import android.os.CountDownTimer
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +19,8 @@ sealed interface CanvasDrawingAction {
     data object OnClearCanvasClick: CanvasDrawingAction
     data object OnUndoClick: CanvasDrawingAction
     data object OnRedoClick: CanvasDrawingAction
+    data object OnUpdateCountDownTimer: CanvasDrawingAction
+    data object OnFinishCountDownTimer: CanvasDrawingAction
 
 }
 
@@ -23,6 +28,7 @@ class CanvasDrawingViewModel: ViewModel() {
 
     private val _state = MutableStateFlow(CanvasDrawingState())
     val state = _state.asStateFlow()
+
 
     fun onAction(action: CanvasDrawingAction){
         when(action){
@@ -33,8 +39,25 @@ class CanvasDrawingViewModel: ViewModel() {
             is CanvasDrawingAction.OnSelectColor -> onSelectColor(action.color)
             CanvasDrawingAction.OnUndoClick -> onUndoClick()
             CanvasDrawingAction.OnRedoClick -> onRedoClick()
+            CanvasDrawingAction.OnFinishCountDownTimer -> OnFinishCountDownTimer()
+            CanvasDrawingAction.OnUpdateCountDownTimer -> OnUpdateCountDownTimer()
         }
     }
+
+    private fun OnUpdateCountDownTimer(){
+        _state.update { it.copy(
+            countDownTimer = it.countDownTimer - 100L
+        ) }
+    }
+
+    private fun OnFinishCountDownTimer(){
+        _state.update { it.copy(
+            isCountDownRunning = false,
+            areBottomButtonsVisible = true
+        ) }
+    }
+
+
 
     private fun onClearCanvasClick(){
         _state.update { it.copy(
@@ -156,4 +179,6 @@ class CanvasDrawingViewModel: ViewModel() {
         }
 
     }
+
+
 }

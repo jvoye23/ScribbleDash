@@ -89,47 +89,33 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        //Center Row
+        //Center Headline & Subline
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset{ IntOffset(0,-150.dp.roundToPx())}
+                .align(Alignment.TopCenter)
+                .offset{ IntOffset(0,190.dp.roundToPx())}
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            Row(
-                modifier = Modifier
-                ,
-
-                ) {
+            Row {
                 Text(
-                    modifier = Modifier
-
-                    ,
+                    modifier = Modifier                    ,
                     text = "Start Drawing!",
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
             }
-            Row(
-                modifier = Modifier
-
-
-            ) {
+            Row {
                 Text(
-                    modifier = Modifier
-
-                    ,
                     text = "Select game mode",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
             }
-
         }
 
         //Center Rectangle

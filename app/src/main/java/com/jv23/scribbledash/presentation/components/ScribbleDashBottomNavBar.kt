@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jv23.scribbledash.navigation.DifficultyLevelScreenRoute
 import com.jv23.scribbledash.navigation.HomeScreenRoute
+import com.jv23.scribbledash.navigation.StatisticsScreenRoute
 import com.jv23.scribbledash.ui.theme.ChartIcon
 import com.jv23.scribbledash.ui.theme.HomeIcon
 import com.jv23.scribbledash.ui.theme.SurfaceHigh
@@ -45,7 +46,7 @@ fun ScribbleDashBottomNavBar(
                         .size(32.dp)
                 )
             },
-            route = DifficultyLevelScreenRoute
+            route = StatisticsScreenRoute
         ),
         BottomNavigationItem(
             title = "Home",
