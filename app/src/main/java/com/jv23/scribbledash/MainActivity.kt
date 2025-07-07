@@ -29,23 +29,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ScribbleDashTheme {
-                // Milstone 1
-                 //ScribbleDashNavigation()
-
-                //Milestone
                 TopLevelNavigation()
-
-
-                /*S/caffold(
-                    containerColor = Color.Transparent,
-                    bottomBar = { ScribbleDashBottomNavBar(navController = NavController(this))}
-
-                ) { innerPadding ->
-                    CanvasDrawingScreenRoot(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    )
-                }*/
             }
         }
     }

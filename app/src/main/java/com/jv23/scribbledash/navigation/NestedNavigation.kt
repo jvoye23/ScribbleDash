@@ -138,8 +138,6 @@ fun NavGraphBuilder.statisticsGraph(modifier: Modifier){
 
 data class TopLevelRoute<T: Any>(val name: String, val route: T, val icon: @Composable () -> Unit)
 
-//val bottomDestinations = listOf(DrawingGraph, StatisticsGraph)
-
 val topLevelRoutes = listOf(
     TopLevelRoute(
         name = "Chart",
@@ -156,6 +154,7 @@ val topLevelRoutes = listOf(
         }
     )
 )
+
 
 @Composable
 fun TopLevelNavigation(
@@ -238,9 +237,6 @@ fun TopLevelNavigation(
         }
     }
 }
-
-
-
 
 /*@Composable
 fun NestedNavigation(
