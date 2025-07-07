@@ -70,21 +70,6 @@ data object DifficultyLevelRoute
 @Serializable
 data object StatisticsRoute
 
-
-@Composable
-fun NestedNavigation(
-    modifier: Modifier = Modifier
-) {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = DrawingGraph) {
-        drawingGraph(modifier, navController)
-        statisticsGraph(modifier)
-        deepGraph(modifier, navController)
-
-    }
-
-}
-
 fun NavGraphBuilder.deepGraph(modifier: Modifier, navController: NavController){
     navigation<DeepGraph>(startDestination = deepGraph(modifier, navController)){
         composable<DifficultyLevelRoute> {
@@ -170,7 +155,6 @@ val topLevelRoutes = listOf(
             Icon(imageVector = HomeIcon, contentDescription = null, modifier = Modifier.size(32.dp))
         }
     )
-
 )
 
 @Composable
@@ -253,8 +237,22 @@ fun TopLevelNavigation(
 
         }
     }
-
-
-
 }
+
+
+
+
+/*@Composable
+fun NestedNavigation(
+    modifier: Modifier = Modifier
+) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = DrawingGraph) {
+        drawingGraph(modifier, navController)
+        statisticsGraph(modifier)
+        deepGraph(modifier, navController)
+
+    }
+
+}*/
 

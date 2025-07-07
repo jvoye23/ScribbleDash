@@ -1,9 +1,9 @@
 package com.jv23.scribbledash.presentation.screens.canvasdrawing
 
-import android.os.CountDownTimer
+import android.content.Context
+import android.graphics.RectF
+
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,24 +19,22 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -56,28 +54,46 @@ import com.jv23.scribbledash.ui.theme.ScribbleDashTheme
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.graphics.PathParser
+import com.jv23.scribbledash.R
+import com.jv23.scribbledash.ScribbleDashApp
 import com.jv23.scribbledash.presentation.components.GridBackground
+import com.jv23.scribbledash.presentation.utils.calculateTotalBoundsWithOffsets
+import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.update
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserException
+import java.io.IOException
 import kotlin.math.abs
+import kotlin.math.min
 
 @Composable
 fun CanvasDrawingScreenRoot(
     modifier: Modifier = Modifier,
-    onNavigateBack: ()-> Unit
+    onNavigateBack: ()-> Unit,
+    viewModel: CanvasDrawingViewModel = viewModel<CanvasDrawingViewModel>(factory = ScribbleDashApp.container.canvasDrawingViewModel)
 ) {
-    val viewModel = viewModel<CanvasDrawingViewModel>()
+    //val viewModel = viewModel<CanvasDrawingViewModel>()
+
     val state by viewModel.state.collectAsStateWithLifecycle()
+
 
     CanvasDrawingScreen(
         onCloseIconClick = onNavigateBack,
         onAction = viewModel::onAction,
         state = state,
-        modifier = modifier,
+        modifier = modifier
         
     )
+
+
 }
+
 
 @Composable
 fun CanvasDrawingScreen(
@@ -172,6 +188,8 @@ fun CanvasDrawingScreen(
                     )
                 }
         ) {
+
+
             state.paths.fastForEach { pathData ->
                 drawPath(
                     path = pathData.path,
@@ -185,7 +203,65 @@ fun CanvasDrawingScreen(
                 )
             }
 
+            val examplePath = state.exampleDrawing?.paths
+            val viewportWidth = state.exampleDrawing?.viewportWidth
+            val viewportHeight = state.exampleDrawing?.viewportHeight
+
+            if (examplePath != null) {
+                if (viewportHeight != null && viewportWidth != null) {
+                    if (examplePath.isNotEmpty() && viewportHeight > 0 ) {
+                        val canvasWidth = this.size.width
+                        val canvasHeight = this.size.height
+
+                        // Calculate scale factors
+                        val scaleX = canvasWidth / viewportWidth
+                        val scaleY = canvasHeight / viewportHeight
+
+                        println("Before scaling:")
+                        println("Canvas W/H: $canvasWidth / $canvasHeight")
+                        println("Scale X/Y: $scaleX / $scaleY")
+
+                        val scale = min(scaleX, scaleY)
+                        println("Chosen Scale (max): $scale")  // Note: We're using max now
+                        val scaledWidth = viewportWidth * scale
+                        val scaledHeight = viewportHeight * scale
+                        println("Scaled W/H: $scaledWidth / $scaledHeight")
+                        val translateX = (canvasWidth - scaledWidth) / 2f
+                        val translateY = (canvasHeight - scaledHeight) / 2f
+                        println("Translate X/Y: $translateX / $translateY")
+
+                        withTransform({
+                            translate(left = translateX, top = translateY)
+                            scale(scaleX = scale, scaleY = scale, pivot = Offset.Zero )
+                        }){
+                            println("Inside withTransform - Drawing sample paths...")
+                            examplePath.forEach { path ->
+
+                                drawPath(
+                                    path = path.asComposePath(),
+                                    color = Color.Black,
+                                    style = Stroke(width = 1f)
+                                )
+
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+            // draw algorithm
+
         }
+        // End of Canvas
+
         Text(
             text = if(state.isCountDownRunning){
                 "Example"
@@ -197,9 +273,6 @@ fun CanvasDrawingScreen(
                 .offset{ IntOffset(0,200.dp.roundToPx()) }
         )
 
-
-
-
         // Bottom Row
         LaunchedEffect(key1 = state.countDownTimer, key2 =  state.isCountDownRunning) {
             if (state.countDownTimer >= 1  && state.isCountDownRunning) {
@@ -209,6 +282,7 @@ fun CanvasDrawingScreen(
                 onAction(CanvasDrawingAction.OnFinishCountDownTimer)
             }
         }
+
 
         AnimatedVisibility(
             visible = state.isCountDownRunning,
@@ -381,6 +455,17 @@ private fun DrawScope.drawPath(
     )
 }
 
+private fun drawAlogorithm(state: CanvasDrawingState): RectF{
+    val exampleDrawingPaths = state.exampleDrawing?.paths
+    val userDrawingPaths = state.currentPath?.path
+    var rectF: RectF = RectF(0f, 0f, 0f, 0f)
+    if (exampleDrawingPaths != null && userDrawingPaths != null){
+        rectF =  calculateTotalBoundsWithOffsets(exampleDrawingPaths, userDrawingPaths)
+    }
+    return rectF
+
+}
+
 @Preview
 @Composable
 private fun CanvasDrawingScreenPreview() {
@@ -388,10 +473,12 @@ private fun CanvasDrawingScreenPreview() {
         CanvasDrawingScreen(
             onCloseIconClick = {},
             onAction = {},
-            state = CanvasDrawingState(),
+            state = CanvasDrawingState(
+                isCountDownRunning = false,
 
+            )
         )
-
     }
-
 }
+
+
